@@ -23,7 +23,7 @@ class Kitty:
         self.animations['idle'] = self.load_animation(sprite_path)
         self.current_animation = 'idle'
 
-        self.label = tk.Label(self.window, image=self.animations["idle"][0], bg="magenta", borderwidth=0)
+        self.label = tk.Label(self.window, image=self.animations["idle"]['right'][0], bg="magenta", borderwidth=0)
         self.label.pack()
 
     def load_animation(self, sprite_path):
@@ -31,7 +31,8 @@ class Kitty:
         sprite_sheet = Image.open(sprite_path)
         frame_count = sprite_sheet.width // self.frame_width
         # holds every separate frame
-        frames = []
+        frames_right = []
+        frames_left = []
         for index in range(frame_count):
             left = index * self.frame_width # frame 0 starts at x=0, frame 1 starts at x=64, frame 3 starts at x=128
             top = 0 # the sheet is only one row tall, so every frame starts at the top
@@ -40,12 +41,23 @@ class Kitty:
             # crop ONE frame out of the sprite sheet
             frame = sprite_sheet.crop((left, top, right, bottom))
             # then convert it into a Tkinter image and store it
-            frames.append(ImageTk.PhotoImage(frame))
-        return frames
+            frames_right.append(ImageTk.PhotoImage(frame))
+            # flip the frame horizontally and store it
+            flipped_frame = frame.transpose(Image.Transpose.FLIP_LEFT_RIGHT)
+            frames_left.append(ImageTk.PhotoImage(flipped_frame))
+        return {
+            'right': frames_right,
+            'left': frames_left
+        }
 
     def animate(self):
+        # choose which direction's frames to display
+        if self.direction == 1:
+            facing = 'right'
+        else:
+            facing = 'left'
         # get the frames for the animation currenlty playing
-        frames = self.animations[self.current_animation]
+        frames = self.animations[self.current_animation][facing]
         # move to the next frame, when the last frame is reached, return to frame 0
         self.current_frame = (self.current_frame + 1) % len(frames)
         # update the image displayed by the label
