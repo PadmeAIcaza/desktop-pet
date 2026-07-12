@@ -1,6 +1,10 @@
 import tkinter as tk
 from PIL import Image, ImageTk
+from pathlib import Path
 from kitty import Kitty
+
+idle_path = Path('../assets')/'sprites'/'Idle.png'
+run_path = Path('../assets')/'sprites'/'Running.png'
 
 # main window
 window = tk.Tk()
@@ -21,14 +25,12 @@ window.configure(bg=transparent_color)
 window.attributes('-transparentcolor', transparent_color)
 
 # create the pet object
-pet = Kitty(window, '../assets/sprites/Idle.png')
+pet = Kitty(window, idle_path, run_path)
 pet.x = (screen_width - pet.height) // 2
-pet.y = (screen_height  - 48) - pet.height
+pet.y = (screen_height  - 45) - pet.height
 window.geometry(f"+{pet.x}+{pet.y}")
+pet.label.bind("<Button-1>", pet.set_target)
 pet.animate()
 pet.move()
-
-# closes the app after pressing esc
-window.bind("<Escape>", lambda event: window.destroy())
 
 window.mainloop()
