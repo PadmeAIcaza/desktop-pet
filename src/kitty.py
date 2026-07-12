@@ -5,16 +5,21 @@ class Kitty:
     def __init__(self, window, sprite_path):
         # save the window so other methods can access it
         self.window = window
-
         # sprite sheet info (384x64, so 6 frames of 64x64
         self.frame_width = 64
         self.frame_height = 64
-        # pet's dimensions
+        # pet's dimensions and position
         self.width = self.frame_width
         self.height = self.frame_height
-        self.current_frame = 0
+        self.x = 0
+        self.y = 0
+        self.speed = 2
+        self.direction = 1 # 1 right, -1 left
+        # save the screen width so the cat knows where the edge is.
+        self.screen_width = self.window.winfo_screenwidth()
         # stores all of the pet's animations
         self.animations = {}
+        self.current_frame = 0
         self.animations['idle'] = self.load_animation(sprite_path)
         self.current_animation = 'idle'
 
@@ -47,3 +52,16 @@ class Kitty:
         self.label.configure(image=frames[self.current_frame])
 
         self.window.after(150, self.animate)
+
+    def move(self):
+        self.x += self.speed * self.direction
+        # check the right edge
+        if self.x + self.width >= self.screen_width:
+            self.direction = -1
+        #check the left edge
+        elif self.x <= 0:
+            self.direction = 1
+        # move the entire transparent window
+        self.window.geometry(f'+{self.x}+{self.y}')
+        # run this method again in 20 milliseconds
+        self.window.after(20, self.move)

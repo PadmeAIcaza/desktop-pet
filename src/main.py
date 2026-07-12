@@ -22,11 +22,11 @@ window.attributes('-transparentcolor', transparent_color)
 
 # create the pet object
 pet = Kitty(window, '../assets/sprites/Idle.png')
-#
-x = (screen_width - pet.height) // 2
-y = (screen_height  - 48) - pet.height
-window.geometry(f"+{x}+{y}")
+pet.x = (screen_width - pet.height) // 2
+pet.y = (screen_height  - 48) - pet.height
+window.geometry(f"+{pet.x}+{pet.y}")
 pet.animate()
+pet.move()
 
 # closes the app after pressing esc
 window.bind("<Escape>", lambda event: window.destroy())
