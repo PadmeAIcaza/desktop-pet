@@ -3,9 +3,12 @@ from PIL import Image, ImageTk
 import time
 
 class Kitty:
-    def __init__(self, window, idle_path, run_path, cuddle_path, sleeping_path, surprised_path):
+    def __init__(self, window, chatbox, idle_path, run_path, cuddle_path, sleeping_path, surprised_path):
         # save the window so other methods can access it
         self.window = window
+        self.chatbox = chatbox
+        self.window_width = 200
+        self.window_height = 160
         # sprite sheet info (384x64, so 6 frames of 64x64
         self.frame_width = 64
         self.frame_height = 64
@@ -33,7 +36,9 @@ class Kitty:
         self.last_interaction = time.time()
 
         self.label = tk.Label(self.window, image=self.animations["idle"]['right'][0], bg="magenta", borderwidth=0)
-        self.label.pack()
+        cat_x = (self.window_width - self.width) // 2 #68
+        cat_y = self.window_height - self.height #96
+        self.label.place(x=cat_x, y=cat_y)
 
     def load_animation(self, path):
         # open sprite sheet using Pillow
@@ -103,7 +108,7 @@ class Kitty:
             else:
                 # move toward the target.
                 self.x += self.speed * self.direction
-            self.window.geometry(f"+{self.x}+{self.y}")
+            self.window.geometry(f"200x160+{self.x}+{self.y}")
         else:
             self.state = 'idle'
             self.change_animation(self.state)
@@ -141,7 +146,7 @@ class Kitty:
     def check_idle(self):
         current_time = time.time()
         elapsed = current_time - self.last_interaction
-        if elapsed > 60:
+        if elapsed > 5:
             self.state = 'sleeping'
             self.change_animation(self.state)
 
@@ -150,15 +155,20 @@ class Kitty:
     def wake_up(self, _):
         if self.state == 'sleeping':
             self.state = 'surprised'
-            self.change_animation('surprised')
+            self.change_animation(self.state)
             self.last_interaction = time.time()
 
             self.window.after(800, self.woken_up)
 
     def woken_up(self):
-        if self.state == 'sleeping':
+        if self.state == 'surprised':
             self.state = 'idle'
             self.change_animation(self.state)
+
+    def talk(self, _):
+        if self.state == 'sleeping':
+            self.wake_up(_=None)
+        self.chatbox.show('Meow!')
 
     # def set_target(self, event):
     #     # horizontal center of the cat on the screen.
