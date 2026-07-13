@@ -6,6 +6,7 @@ idle_path = Path('../assets')/'sprites'/'Idle.png'
 run_path = Path('../assets')/'sprites'/'Running.png'
 cuddle_path = Path('../assets')/'sprites'/'Happy.png'
 sleeping_path = Path('../assets')/'sprites'/'Sleeping.png'
+surprised_path = Path('../assets')/'sprites'/'Surprised.png'
 
 # main window
 window = tk.Tk()
@@ -25,7 +26,7 @@ window.configure(bg=transparent_color)
 window.attributes('-transparentcolor', transparent_color)
 
 # create the pet object
-pet = Kitty(window, idle_path, run_path, cuddle_path, sleeping_path)
+pet = Kitty(window, idle_path, run_path, cuddle_path, sleeping_path, surprised_path)
 pet.x = (screen_width - pet.height) // 2
 pet.y = (screen_height  - 45) - pet.height
 window.geometry(f"+{pet.x}+{pet.y}")
@@ -33,8 +34,11 @@ window.geometry(f"+{pet.x}+{pet.y}")
 pet.label.bind("<Button-1>", pet.set_target_left)
 pet.label.bind("<Button-2>", pet.start_cuddles)
 pet.label.bind("<Button-3>", pet.set_target_right)
+pet.label.bind("<Enter>", pet.wake_up)
 pet.animate()
 pet.move()
 pet.check_idle()
+
+window.bind("<Escape>", lambda event: window.destroy())
 
 window.mainloop()

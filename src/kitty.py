@@ -3,7 +3,7 @@ from PIL import Image, ImageTk
 import time
 
 class Kitty:
-    def __init__(self, window, idle_path, run_path, cuddle_path, sleeping_path):
+    def __init__(self, window, idle_path, run_path, cuddle_path, sleeping_path, surprised_path):
         # save the window so other methods can access it
         self.window = window
         # sprite sheet info (384x64, so 6 frames of 64x64
@@ -17,9 +17,7 @@ class Kitty:
         self.speed = 4
         self.direction = 1 # 1 right, -1 left
         self.target_x = 0
-        self.is_moving = False
-        self.is_cuddling = False
-        self.is_sleeping = False
+        self.state = 'idle'
         self.move_distance = int(self.window.winfo_fpixels("4c")) # converts 4 centimeters into pixels for this display.
         # save the screen width so the cat knows where the edge is.
         self.screen_width = self.window.winfo_screenwidth()
@@ -30,6 +28,7 @@ class Kitty:
         self.animations['run'] = self.load_animation(run_path)
         self.animations['cuddles'] = self.load_animation(cuddle_path)
         self.animations['sleeping'] = self.load_animation(sleeping_path)
+        self.animations['surprised'] = self.load_animation(surprised_path)
         self.current_animation = 'idle'
         self.last_interaction = time.time()
 
@@ -65,7 +64,7 @@ class Kitty:
             return # avoids restarting the animation if it is already active
 
         self.current_animation = animation_name
-        #self.current_frame
+        self.current_frame = 0
 
     def animate(self):
         # choose which direction's frames to display
@@ -83,41 +82,44 @@ class Kitty:
         self.window.after(150, self.animate)
 
     def move(self):
-        if self.is_sleeping:
+        if self.state == 'sleeping':
             # do not move or replace the sleeping animation.
             pass
-        elif self.is_cuddling:
+        elif self.state == 'surprised':
+            # do not move or replace the sleeping animation.
+            pass
+        elif self.state == 'cuddles':
             # do not move or switch animations while cuddling.
             pass
-        elif self.is_moving:
-            self.change_animation("run")
+        elif self.state == 'run':
+            self.change_animation(self.state)
             # calculate the remaining horizontal distance.
             distance = self.target_x - self.x
             # stop when the remaining distance is smaller than one movement.
             if abs(distance) <= self.speed:
                 self.x = self.target_x
-                self.is_moving = False
-                self.change_animation("idle")
+                self.state = 'idle'
+                self.change_animation(self.state)
             else:
                 # move toward the target.
                 self.x += self.speed * self.direction
             self.window.geometry(f"+{self.x}+{self.y}")
         else:
-            self.change_animation("idle")
+            self.state = 'idle'
+            self.change_animation(self.state)
 
         self.window.after(20, self.move)
 
     def start_cuddles(self, _):
-        self.is_moving = False
-        self.is_cuddling = True
-        self.change_animation('cuddles')
+        self.state = 'cuddles'
+        self.change_animation(self.state)
         self.last_interaction = time.time()
 
         self.window.after(3000, self.end_cuddles)
 
     def end_cuddles(self):
-        self.is_cuddling = False
-        self.change_animation('idle')
+        self.state = 'idle'
+        self.change_animation(self.state)
 
     def move_fixed_direction(self, direction):
         self.direction = direction
@@ -125,7 +127,7 @@ class Kitty:
         # prevent the target from going beyond either screen edge.
         self.target_x = max(0,min(self.target_x, self.screen_width - self.width))
         # tell move() that the cat should start running.
-        self.is_moving = True
+        self.state = 'run'
 
 
     def set_target_right(self, _):
@@ -139,13 +141,24 @@ class Kitty:
     def check_idle(self):
         current_time = time.time()
         elapsed = current_time - self.last_interaction
-        if elapsed > 5:
-            self.is_sleeping = True
-            self.change_animation('sleeping')
-        else:
-            self.is_sleeping = False
+        if elapsed > 60:
+            self.state = 'sleeping'
+            self.change_animation(self.state)
 
         self.window.after(500, self.check_idle)
+
+    def wake_up(self, _):
+        if self.state == 'sleeping':
+            self.state = 'surprised'
+            self.change_animation('surprised')
+            self.last_interaction = time.time()
+
+            self.window.after(800, self.woken_up)
+
+    def woken_up(self):
+        if self.state == 'sleeping':
+            self.state = 'idle'
+            self.change_animation(self.state)
 
     # def set_target(self, event):
     #     # horizontal center of the cat on the screen.
