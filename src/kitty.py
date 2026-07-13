@@ -1,8 +1,9 @@
 import tkinter as tk
 from PIL import Image, ImageTk
+import time
 
 class Kitty:
-    def __init__(self, window, idle_path, run_path, cuddle_path, box_path):
+    def __init__(self, window, idle_path, run_path, cuddle_path, sleeping_path):
         # save the window so other methods can access it
         self.window = window
         # sprite sheet info (384x64, so 6 frames of 64x64
@@ -18,6 +19,7 @@ class Kitty:
         self.target_x = 0
         self.is_moving = False
         self.is_cuddling = False
+        self.is_sleeping = False
         self.move_distance = int(self.window.winfo_fpixels("4c")) # converts 4 centimeters into pixels for this display.
         # save the screen width so the cat knows where the edge is.
         self.screen_width = self.window.winfo_screenwidth()
@@ -27,8 +29,9 @@ class Kitty:
         self.animations['idle'] = self.load_animation(idle_path)
         self.animations['run'] = self.load_animation(run_path)
         self.animations['cuddles'] = self.load_animation(cuddle_path)
-        self.animations['box'] = self.load_animation(box_path)
+        self.animations['sleeping'] = self.load_animation(sleeping_path)
         self.current_animation = 'idle'
+        self.last_interaction = time.time()
 
         self.label = tk.Label(self.window, image=self.animations["idle"]['right'][0], bg="magenta", borderwidth=0)
         self.label.pack()
@@ -80,7 +83,10 @@ class Kitty:
         self.window.after(150, self.animate)
 
     def move(self):
-        if self.is_cuddling:
+        if self.is_sleeping:
+            # do not move or replace the sleeping animation.
+            pass
+        elif self.is_cuddling:
             # do not move or switch animations while cuddling.
             pass
         elif self.is_moving:
@@ -105,6 +111,7 @@ class Kitty:
         self.is_moving = False
         self.is_cuddling = True
         self.change_animation('cuddles')
+        self.last_interaction = time.time()
 
         self.window.after(3000, self.end_cuddles)
 
@@ -123,9 +130,22 @@ class Kitty:
 
     def set_target_right(self, _):
         self.move_fixed_direction(1)
+        self.last_interaction = time.time()
 
     def set_target_left(self, _):
         self.move_fixed_direction(-1)
+        self.last_interaction = time.time()
+
+    def check_idle(self):
+        current_time = time.time()
+        elapsed = current_time - self.last_interaction
+        if elapsed > 5:
+            self.is_sleeping = True
+            self.change_animation('sleeping')
+        else:
+            self.is_sleeping = False
+
+        self.window.after(500, self.check_idle)
 
     # def set_target(self, event):
     #     # horizontal center of the cat on the screen.
