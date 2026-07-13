@@ -2,7 +2,7 @@ import tkinter as tk
 from PIL import Image, ImageTk
 
 class Kitty:
-    def __init__(self, window, idle_path, run_path, box_path):
+    def __init__(self, window, idle_path, run_path, cuddle_path, box_path):
         # save the window so other methods can access it
         self.window = window
         # sprite sheet info (384x64, so 6 frames of 64x64
@@ -17,7 +17,7 @@ class Kitty:
         self.direction = 1 # 1 right, -1 left
         self.target_x = 0
         self.is_moving = False
-        self.is_idle = False
+        self.is_cuddling = False
         self.move_distance = int(self.window.winfo_fpixels("4c")) # converts 4 centimeters into pixels for this display.
         # save the screen width so the cat knows where the edge is.
         self.screen_width = self.window.winfo_screenwidth()
@@ -26,15 +26,16 @@ class Kitty:
         self.current_frame = 0
         self.animations['idle'] = self.load_animation(idle_path)
         self.animations['run'] = self.load_animation(run_path)
+        self.animations['cuddles'] = self.load_animation(cuddle_path)
         self.animations['box'] = self.load_animation(box_path)
         self.current_animation = 'idle'
 
         self.label = tk.Label(self.window, image=self.animations["idle"]['right'][0], bg="magenta", borderwidth=0)
         self.label.pack()
 
-    def load_animation(self, run_path):
+    def load_animation(self, path):
         # open sprite sheet using Pillow
-        sprite_sheet = Image.open(run_path)
+        sprite_sheet = Image.open(path)
         frame_count = sprite_sheet.width // self.frame_width
         # holds every separate frame
         frames_right = []
@@ -78,11 +79,11 @@ class Kitty:
 
         self.window.after(150, self.animate)
 
-    def if_idle(self):
-        pass
-
     def move(self):
-        if self.is_moving:
+        if self.is_cuddling:
+            # do not move or switch animations while cuddling.
+            pass
+        elif self.is_moving:
             self.change_animation("run")
             # calculate the remaining horizontal distance.
             distance = self.target_x - self.x
@@ -99,6 +100,17 @@ class Kitty:
             self.change_animation("idle")
 
         self.window.after(20, self.move)
+
+    def start_cuddles(self, _):
+        self.is_moving = False
+        self.is_cuddling = True
+        self.change_animation('cuddles')
+
+        self.window.after(3000, self.end_cuddles)
+
+    def end_cuddles(self):
+        self.is_cuddling = False
+        self.change_animation('idle')
 
     def move_fixed_direction(self, direction):
         self.direction = direction
