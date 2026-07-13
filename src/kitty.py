@@ -2,7 +2,7 @@ import tkinter as tk
 from PIL import Image, ImageTk
 
 class Kitty:
-    def __init__(self, window, idle_path, run_path):
+    def __init__(self, window, idle_path, run_path, box_path):
         # save the window so other methods can access it
         self.window = window
         # sprite sheet info (384x64, so 6 frames of 64x64
@@ -17,7 +17,8 @@ class Kitty:
         self.direction = 1 # 1 right, -1 left
         self.target_x = 0
         self.is_moving = False
-        self.move_distance = int(self.window.winfo_fpixels("4c")) # converts 3 centimeters into pixels for this display.
+        self.is_idle = False
+        self.move_distance = int(self.window.winfo_fpixels("4c")) # converts 4 centimeters into pixels for this display.
         # save the screen width so the cat knows where the edge is.
         self.screen_width = self.window.winfo_screenwidth()
         # stores all of the pet's animations
@@ -25,6 +26,7 @@ class Kitty:
         self.current_frame = 0
         self.animations['idle'] = self.load_animation(idle_path)
         self.animations['run'] = self.load_animation(run_path)
+        self.animations['box'] = self.load_animation(box_path)
         self.current_animation = 'idle'
 
         self.label = tk.Label(self.window, image=self.animations["idle"]['right'][0], bg="magenta", borderwidth=0)
@@ -59,7 +61,7 @@ class Kitty:
             return # avoids restarting the animation if it is already active
 
         self.current_animation = animation_name
-        self.current_frame
+        #self.current_frame
 
     def animate(self):
         # choose which direction's frames to display
@@ -75,6 +77,9 @@ class Kitty:
         self.label.configure(image=frames[self.current_frame])
 
         self.window.after(150, self.animate)
+
+    def if_idle(self):
+        pass
 
     def move(self):
         if self.is_moving:
@@ -95,23 +100,39 @@ class Kitty:
 
         self.window.after(20, self.move)
 
-    def set_target(self, event):
-        # horizontal center of the cat on the screen.
-        cat_center_x = self.x + (self.width // 2)
-        # mouse position relative to the entire screen.
-        mouse_x = event.x_root
-        if mouse_x > cat_center_x:
-            # mouse is to the right of the cat.
-            self.direction = 1
-            self.target_x = self.x + self.move_distance
-        elif mouse_x < cat_center_x:
-            # mouse is to the left of the cat.
-            self.direction = -1
-            self.target_x = self.x - self.move_distance
-        else:
-            # the mouse is exactly in the center, so do nothing.
-            return
+    def move_fixed_direction(self, direction):
+        self.direction = direction
+        self.target_x = self.x + (direction * self.move_distance)
         # prevent the target from going beyond either screen edge.
         self.target_x = max(0,min(self.target_x, self.screen_width - self.width))
         # tell move() that the cat should start running.
         self.is_moving = True
+
+
+    def set_target_right(self, _):
+        self.move_fixed_direction(1)
+
+    def set_target_left(self, _):
+        self.move_fixed_direction(-1)
+
+    # def set_target(self, event):
+    #     # horizontal center of the cat on the screen.
+    #     cat_center_x = self.x + (self.width // 2)
+    #     # mouse position relative to the entire screen.
+    #     mouse_x = event.x_root
+    #     if mouse_x > cat_center_x:
+    #         # mouse is to the right of the cat.
+    #         self.direction = 1
+    #         self.target_x = self.x + self.move_distance
+    #     elif mouse_x < cat_center_x:
+    #         # mouse is to the left of the cat.
+    #         self.direction = -1
+    #         self.target_x = self.x - self.move_distance
+    #     else:
+    #         # the mouse is exactly in the center, so do nothing.
+    #         return
+    #     # prevent the target from going beyond either screen edge.
+    #     self.target_x = max(0,min(self.target_x, self.screen_width - self.width))
+    #     # tell move() that the cat should start running.
+    #     self.is_moving = True
+
