@@ -21,7 +21,7 @@ class Kitty:
         self.direction = 1 # 1 right, -1 left
         self.target_x = 0
         self.state = 'idle'
-        self.move_distance = int(self.window.winfo_fpixels("4c")) # converts 4 centimeters into pixels for this display.
+        self.move_distance = int(self.window.winfo_fpixels("5c")) # converts 4 centimeters into pixels for this display.
         # save the screen width so the cat knows where the edge is.
         self.screen_width = self.window.winfo_screenwidth()
         # stores all of the pet's animations
@@ -165,10 +165,10 @@ class Kitty:
             self.state = 'idle'
             self.change_animation(self.state)
 
+    # debbuging
     def talk(self, _):
-        if self.state == 'sleeping':
-            self.wake_up(_=None)
         self.chatbox.show('Meow!')
+        self.last_interaction = time.time()
 
     # def set_target(self, event):
     #     # horizontal center of the cat on the screen.

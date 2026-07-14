@@ -12,7 +12,7 @@ class ChatBox:
     def show(self, message):
         self.text_label.configure(text=message)
         self.chatbox.place(x=49, y=50)
-        self.text_label.place(x=80, y=65)
+        self.text_label.place(x=80, y=70)
         # hide after 2 seconds
         self.window.after(2000, self.hide)
 

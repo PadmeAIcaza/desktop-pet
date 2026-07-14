@@ -2,6 +2,7 @@ import tkinter as tk
 from pathlib import Path
 from kitty import Kitty
 from chatbox import ChatBox
+from scheduleManager import ScheduleManager
 
 idle_path = Path('../assets')/'sprites'/'Idle.png'
 run_path = Path('../assets')/'sprites'/'Running.png'
@@ -12,6 +13,7 @@ chatbox_path = Path('../assets')/'chatbox.png'
 
 # main window
 window = tk.Tk()
+schedule_manager = ScheduleManager(window)
 screen_width = window.winfo_screenwidth()  # 1536
 screen_height = window.winfo_screenheight() # 864
 
@@ -27,7 +29,7 @@ transparent_color = 'magenta'
 window.configure(bg=transparent_color)
 window.attributes('-transparentcolor', transparent_color)
 
-# create the pet object
+# create the chatbox and pet object
 chatbox = ChatBox(window, chatbox_path)
 pet = Kitty(window, chatbox, idle_path, run_path, cuddle_path, sleeping_path, surprised_path)
 pet.x = (screen_width - pet.window_width) // 2
@@ -39,6 +41,8 @@ pet.label.bind("<Button-1>", pet.set_target_left)
 pet.label.bind("<Button-2>", pet.start_cuddles)
 pet.label.bind("<Button-3>", pet.set_target_right)
 pet.label.bind("<Enter>", pet.wake_up)
+pet.label.bind("<Double-Button-2>", schedule_manager.open_schedule_editor)
+# debugging
 pet.label.focus_set()
 pet.label.bind("<space>", pet.talk)
 pet.animate()
