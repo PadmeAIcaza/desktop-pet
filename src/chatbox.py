@@ -1,9 +1,7 @@
 import tkinter as tk
 from tkinter import *
 from PIL import Image, ImageTk
-from datetime import datetime
 from scheduleManager import ScheduleManager
-
 
 class ChatBox:
     def __init__(self, window, chatbox_path):
@@ -13,19 +11,20 @@ class ChatBox:
         # self.label = Label(self.frame, text="")
         # self.label.pack()
         self.schedule_manager = ScheduleManager(self.window)
-        original_image = Image.open(chatbox_path)
-        resized_image = original_image.resize((200, 100), Image.Resampling.LANCZOS)
-        self.chatbox_image = ImageTk.PhotoImage(resized_image)
+        image = Image.open(chatbox_path).resize((200, 100), Image.Resampling.LANCZOS)
+        self.chatbox_image = ImageTk.PhotoImage(image)
         self.chatbox = tk.Label(self.window, image=self.chatbox_image, bg="magenta", borderwidth=0)
         # self.chatbox_frame = Frame(window)
         self.text_label = tk.Label(self.window, text='', bg=BG, font=('Arial', 9), wraplength=75, justify='center')
-        self.button = Button(window, text="✓", width=5, command=self.task_completed, pady=0)
+        check_image = Image.open('../assets/checkbutton.png').resize((35, 35), Image.Resampling.LANCZOS)
+        self.checkmark = ImageTk.PhotoImage(check_image)
+        self.button = Button(window, image=self.checkmark, bd=0, highlightthickness=0, bg=BG, activebackground=BG, command=self.task_completed)
         self.chatbox_x = 8
         self.chatbox_y = 1
         self.text_x = 40
         self.text_y = 15
-        self.button_x = 120
-        self.button_y = 45
+        self.button_x = 140
+        self.button_y = 30
 
     def show(self, message):
         self.text_label.configure(text=message)

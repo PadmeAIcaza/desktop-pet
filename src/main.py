@@ -1,5 +1,6 @@
 import tkinter as tk
 from pathlib import Path
+import time
 from kitty import Kitty
 from chatbox import ChatBox
 from scheduleManager import ScheduleManager
