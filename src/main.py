@@ -43,11 +43,17 @@ pet.label.bind("<Button-3>", pet.set_target_right)
 pet.label.bind("<Enter>", pet.wake_up)
 pet.label.bind("<Double-Button-2>", schedule_manager.open_schedule_editor)
 # debugging
-pet.label.focus_set()
-pet.label.bind("<space>", pet.talk)
+pet.label.bind("<Double-Button-1>", pet.talk)
 pet.animate()
 pet.move()
 pet.check_idle()
+chatbox.display_task()
+# next_task = schedule_manager.get_next_task()
+# if next_task:
+#     print(next_task['time'])
+#     print(next_task['task'])
+# else:
+#     print('there are no incomplete tasks')
 
 window.bind("<Escape>", lambda event: window.destroy())
 

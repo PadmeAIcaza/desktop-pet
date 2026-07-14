@@ -7,7 +7,8 @@ class ScheduleManager:
     def __init__(self, window):
         self.window = window
         self.input_window = None
-        self.file_path = 'reminder.json'
+        self.file_path = 'schedule.json'
+        self.time = 0
 
     def open_schedule_editor(self, _):
         BG = '#FDEB9E'
@@ -58,17 +59,29 @@ class ScheduleManager:
             'task': task_text,
             'completed': False
         }
-        time = datetime.strptime(time_text, "%H:%M")
-        #print(time)
 
         data['schedule'].append(new_task)
-        data["schedule"].sort(key=lambda task: task["time"])
+        data['schedule'].sort(key=lambda task: task["time"])
         self.save_schedule(data)
 
+    def complete_next_task(self):
+        schedule_list = self.load_schedule()
+        schedule = schedule_list['schedule']
+        for task in schedule:
+            if not task.get('completed', False):
+                task['completed'] = True
+                self.save_schedule(schedule_list)
+                return task
+        return None
+
     def get_next_task(self):
-        with open(self.file_path, mode='r') as file:
-           time = json.load(file)
-        print(time)
+        schedule_list = self.load_schedule()
+        schedule = schedule_list['schedule']
+        for task in schedule:
+            if not task['completed']:
+                return task
+        return None
+
 
 
 

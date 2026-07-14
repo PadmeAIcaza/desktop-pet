@@ -1,6 +1,7 @@
 import tkinter as tk
 from PIL import Image, ImageTk
 import time
+from scheduleManager import ScheduleManager
 
 class Kitty:
     def __init__(self, window, chatbox, idle_path, run_path, cuddle_path, sleeping_path, surprised_path):
@@ -167,8 +168,10 @@ class Kitty:
 
     # debbuging
     def talk(self, _):
-        self.chatbox.show('Meow!')
+        message = self.chatbox.display_task()
+        self.chatbox.show(message)
         self.last_interaction = time.time()
+        
 
     # def set_target(self, event):
     #     # horizontal center of the cat on the screen.
