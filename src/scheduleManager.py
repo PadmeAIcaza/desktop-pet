@@ -82,7 +82,11 @@ class ScheduleManager:
                 return task
         return None
 
+    def is_task_late(self, task):
+        current_time = datetime.now().time()
+        task_time = datetime.strptime(task['time'], '%H:%M').time()
 
+        return current_time > task_time and not task['completed']
 
 
 

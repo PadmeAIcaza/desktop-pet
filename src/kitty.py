@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import *
 from PIL import Image, ImageTk
 import time
 from scheduleManager import ScheduleManager
@@ -167,11 +168,12 @@ class Kitty:
             self.change_animation(self.state)
 
     # debbuging
-    def talk(self, _):
-        message = self.chatbox.display_task()
-        self.chatbox.show(message)
-        self.last_interaction = time.time()
-        
+    # def talk(self, _):
+    #     self.chatbox.frame.place(x=self.chatbox.chatbox_x, y=self.chatbox.chatbox_y)
+    #     message = self.chatbox.display_task()
+    #     self.chatbox.show(message)
+    #     self.last_interaction = time.time()
+
 
     # def set_target(self, event):
     #     # horizontal center of the cat on the screen.
