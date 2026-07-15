@@ -1,5 +1,10 @@
 # 🐈 DesktopCat
 
+![Python](https://img.shields.io/badge/Python-3.13-blue)
+![Tkinter](https://img.shields.io/badge/GUI-Tkinter-green)
+![License](https://img.shields.io/badge/License-MIT-yellow)
+![Status](https://img.shields.io/badge/Status-In_Development-orange)
+
 A desktop virtual cat that helps you stay on top of your daily schedule.
 
 DesktopCat is a Python desktop application that combines a lightweight virtual pet with a personal task manager. Instead of being just a decorative desktop pet, the cat actively reminds you of upcoming tasks, lets you manage your schedule through a simple interface, and can optionally integrate with a local AI assistant for natural conversations.
