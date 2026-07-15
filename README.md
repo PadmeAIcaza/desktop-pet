@@ -1,3 +1,4 @@
+
 # 🐈 DesktopCat
 
 ![Python](https://img.shields.io/badge/Python-3.13-blue)
@@ -21,6 +22,10 @@ DesktopCat is a Python desktop application that combines a lightweight virtual p
 * 🐈 Animated desktop cat with multiple sprite animations
 * 🖱️ Interactive controls using mouse clicks
 * 💾 Local JSON-based task storage
+
+## 📸 Preview
+<img width="501" height="228" alt="Animation" src="https://github.com/user-attachments/assets/bf07f83a-7eba-4186-9b68-615222bf39e1" />
+
 
 ## 🛠️ Built With
 
